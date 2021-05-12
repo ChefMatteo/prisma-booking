@@ -42,7 +42,7 @@ public class StructureController {
     @GetMapping("/{structureId}")
     @ResponseStatus(HttpStatus.OK)
     public Structure findStructure(@PathVariable("structureId") String structureId) {
-        return structureService.findStructure(structureId);
+        return structureService.getSingle(structureId);
     }
 
     @Operation(summary = "Add a new structure")
@@ -54,7 +54,7 @@ public class StructureController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Structure createStructure(@RequestBody Structure structure) {
-        return structureService.createStructure(structure);
+        return structureService.createNew(structure);
     }
 
     @Operation(summary = "Update an existing structure")

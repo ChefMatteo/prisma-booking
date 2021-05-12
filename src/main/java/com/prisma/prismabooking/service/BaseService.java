@@ -30,8 +30,10 @@ public abstract class BaseService<T> {
     protected List<T> list = new ArrayList<>();
     protected Gson gson;
     protected String getterOfPrimaryKey;
+    protected static Resource resource;
 
-    protected Resource init(Type obj, String pathFile) {
+
+    protected void init(Type obj, String pathFile) {
         if (!Files.exists(Paths.get(config.getDataPath()))) {
             try {
                 Files.createDirectory(Paths.get(config.getDataPath()));
@@ -46,7 +48,7 @@ public abstract class BaseService<T> {
             e.printStackTrace();
         }
         ResourceLoader rl = new DefaultResourceLoader();
-        Resource resource = rl.getResource("file:" + config.getDataPath() + pathFile);
+        resource = rl.getResource("file:" + config.getDataPath() + pathFile);
         if (resource.exists()) {
             try {
                 Stream<String> lines = Files.lines(resource.getFile().toPath());
@@ -55,21 +57,23 @@ public abstract class BaseService<T> {
                 log.error("Error reading structures file with cause: {}", e.getMessage());
             }
         }
-        return resource;
     }
 
 
-    @SneakyThrows
-    protected T createNew(T obj, Resource resource) {
+    public T createNew(T obj) {
         if (!list.contains(obj)) {
             list.add(obj);
-            Files.write(resource.getFile().toPath(), (gson.toJson(obj).concat(System.lineSeparator())).getBytes(), StandardOpenOption.APPEND);
+            try {
+                Files.write(resource.getFile().toPath(), (gson.toJson(obj).concat(System.lineSeparator())).getBytes(), StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return obj;
         }
         throw new ConflictException("id", invokeGetMethod(obj).toString());
     }
 
-    protected T getSingle(String id) {
+    public T getSingle(String id) {
         return list.stream()
                 .filter(Objects::nonNull)
                 .filter(t -> invokeGetMethod(t).toString().equalsIgnoreCase(id))
@@ -77,46 +81,21 @@ public abstract class BaseService<T> {
                 .orElseThrow(() -> new NotFoundException(id));
     }
 
-    @SneakyThrows
-    protected void deleteSingle(String id, Resource resource) {
+    public void deleteSingle(String id) {
         T objToReturn = list.stream()
                 .filter(Objects::nonNull)
                 .filter(t -> invokeGetMethod(t).toString().equalsIgnoreCase(id))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(id));
         list.remove(objToReturn);
-        updateJson(resource);
+        updateJson();
     }
 
-    protected T updateSingle(T obj, String id, Resource resource) {
-        deleteSingle(id, resource);
-        createNew(obj, resource);
+    public T updateSingle(T obj, String id) {
+        deleteSingle(id);
+        createNew(obj);
         return obj;
     }
-
-
-    protected Object invokeGetMethod(T objOfMethod) {
-        return Arrays.stream(objOfMethod.getClass().getMethods())
-                .filter(method -> method.getName().contains(getterOfPrimaryKey))
-                .map(method -> {
-                    try {
-                        return method.invoke(objOfMethod);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                    return "";
-                })
-                .findFirst().get();
-    }
-
-    @SneakyThrows
-    protected void updateJson(Resource resource){
-        String updatedList = list.stream()
-                .map(t -> gson.toJson(t))
-                .collect(Collectors.joining(System.lineSeparator()));
-        Files.write(resource.getFile().toPath(), (updatedList+System.lineSeparator()).getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-    }
-
 
     protected PagedResponse<T> findPage(List<T> filteredList, Integer index, Integer limit) {
         List<T> pageContent;
@@ -146,8 +125,32 @@ public abstract class BaseService<T> {
                 .build();
     }
 
+    private Object invokeGetMethod(T objOfMethod) {
+        return Arrays.stream(objOfMethod.getClass().getMethods())
+                .filter(method -> method.getName().contains(getterOfPrimaryKey))
+                .map(method -> {
+                    try {
+                        return method.invoke(objOfMethod);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    return "";
+                })
+                .findFirst().get();
+    }
 
-    protected Integer handleLimit(Integer limit) {
+    protected void updateJson(){
+        String updatedList = list.stream()
+                .map(t -> gson.toJson(t))
+                .collect(Collectors.joining(System.lineSeparator()));
+        try {
+            Files.write(resource.getFile().toPath(), (updatedList+System.lineSeparator()).getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Integer handleLimit(Integer limit) {
         limit = Optional.ofNullable(limit)
                 .filter(l -> l <= config.getMaxPageLimit())
                 .orElse(config.getDefaultPageLimit());

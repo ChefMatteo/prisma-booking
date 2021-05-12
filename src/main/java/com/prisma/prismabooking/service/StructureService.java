@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 @Slf4j
 public class StructureService extends BaseService<Structure> {
 
-    public static Resource structureFile;
     RoomService roomService;
 
     public StructureService(ConfigurationComponent configurationComponent, Gson gson) {
@@ -38,16 +37,13 @@ public class StructureService extends BaseService<Structure> {
 
     @PostConstruct
     private void init() {
-        structureFile = init(Structure.class, "/structures.json");
+        init(Structure.class, "/structures.json");
     }
 
     public PagedResponse<Structure> findStructurePage(Integer offset, Integer limit) {
         return findPage(list, offset, limit);
     }
 
-    public Structure createStructure(Structure structure) {
-        return createNew(structure, structureFile);
-    }
 
     public Structure updateStructure(String structureId, Structure structure) {
         if(!structureId.equalsIgnoreCase(structure.getId())){
@@ -55,7 +51,7 @@ public class StructureService extends BaseService<Structure> {
                     .filter(r->r.getStructureId().equalsIgnoreCase(structureId))
                     .forEach(r->r.setStructureId(structure.getId()));
         }
-        return updateSingle(structure, structureId, structureFile);
+        return updateSingle(structure, structureId);
     }
 
     public void delete(String structureId) {
@@ -63,11 +59,8 @@ public class StructureService extends BaseService<Structure> {
                 .filter(r->r.getStructureId().equalsIgnoreCase(structureId))
                 .collect(Collectors.toList());
         roomService.list.retainAll(roomsToRemove);
-        roomService.updateJson(RoomService.roomFile);
-        deleteSingle(structureId, structureFile);
+        roomService.updateJson();
+        deleteSingle(structureId);
     }
 
-    public Structure findStructure(String structureId) {
-        return getSingle(structureId);
-    }
 }

@@ -28,7 +28,7 @@ public class UserController {
                             schema = @Schema(implementation = PagedResponse.class)) }) })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PagedResponse<User> findStructurePage(@RequestParam(required = false) Integer offset,
+    public PagedResponse<User> findUserPage(@RequestParam(required = false) Integer offset,
                                                  @RequestParam(required = false) Integer limit) {
         return userService.findUsersPage(offset, limit);
     }
@@ -41,8 +41,8 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found",content = @Content )})
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public User findStructure(@PathVariable("userId") String userId) {
-        return userService.findUser(userId);
+    public User findUser(@PathVariable("userId") String userId) {
+        return userService.getSingle(userId);
     }
 
     @Operation(summary = "Add a new user")
@@ -53,8 +53,8 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "Already exists a user with id in body", content = @Content)})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createStructure(@RequestBody User user) {
-        return userService.createUser(user);
+    public User createUser(@RequestBody User user) {
+        return userService.createNew(user);
     }
 
     @Operation(summary = "Update an existing user")
@@ -65,9 +65,9 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "No user to update", content = @Content)})
     @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public User updateStructure(@PathVariable("userId") String userId,
+    public User updateUser(@PathVariable("userId") String userId,
                                 @RequestBody User user) {
-        return  userService.updateUser(userId, user);
+        return  userService.updateSingle(user, userId);
     }
 
     @Operation(summary = "Delete an existing user")
@@ -76,8 +76,8 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "No user to delete")})
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteStructure(@PathVariable("userId") String userId) {
-        userService.deleteFromFile(userId);
+    public void deleteUser(@PathVariable("userId") String userId) {
+        userService.deleteSingle(userId);
     }
 
 }

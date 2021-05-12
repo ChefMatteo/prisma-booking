@@ -44,8 +44,8 @@ public class ServiceController {
             @ApiResponse(responseCode = "404", description = "No service to get", content = @Content)})
     @GetMapping("/{serviceName}")
     @ResponseStatus(HttpStatus.OK)
-    public Service findStructure(@PathVariable("serviceName") String serviceName) {
-        return serviceService.findService(serviceName);
+    public Service findService(@PathVariable("serviceName") String serviceName) {
+        return serviceService.getSingle(serviceName);
     }
 
     @Operation(summary = "Create new service")
@@ -56,8 +56,8 @@ public class ServiceController {
             @ApiResponse(responseCode = "409", description = "Already exists a service with name in body", content = @Content)})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Service createStructure(@RequestBody Service service) {
-        return serviceService.createService(service);
+    public Service createService(@RequestBody Service service) {
+        return serviceService.createNew(service);
     }
 
     @Operation(summary = "Update an existing service")
@@ -68,7 +68,7 @@ public class ServiceController {
             @ApiResponse(responseCode = "404", description = "No service to update", content = @Content)})
     @PutMapping("/{serviceName}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Service updateStructure(@PathVariable("serviceName") String serviceName,
+    public Service updateService(@PathVariable("serviceName") String serviceName,
                                 @RequestBody Service service) {
         return serviceService.updateService(serviceName, service);
     }

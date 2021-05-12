@@ -15,8 +15,6 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class UserService extends BaseService<User>{
 
-    public static Resource userFile;
-
     public UserService(ConfigurationComponent configurationComponent, Gson gson) {
         super.config = configurationComponent;
         super.gson = gson;
@@ -25,23 +23,7 @@ public class UserService extends BaseService<User>{
 
     @PostConstruct
     private void init() {
-        userFile = init(User.class, "/users.json");
-    }
-
-    public User findUser(String userId) {
-        return getSingle(userId);
-    }
-
-    public User createUser(User user) {
-        return createNew(user, userFile);
-    }
-
-    public User updateUser(String userId, User user) {
-        return updateSingle(user, userId, userFile);
-    }
-
-    public void deleteFromFile(String userId) {
-        deleteSingle(userId, userFile);
+        init(User.class, "/users.json");
     }
 
     public PagedResponse<User> findUsersPage(Integer offset, Integer limit) {

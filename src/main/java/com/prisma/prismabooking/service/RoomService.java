@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RoomService extends BaseService<Room> {
 
-    public static Resource roomFile;
     StructureService structureService;
 
     public RoomService(ConfigurationComponent configurationComponent, Gson gson) {
@@ -34,7 +33,7 @@ public class RoomService extends BaseService<Room> {
 
     @PostConstruct
     private void init() {
-        roomFile = init(Room.class, "/rooms.json");
+        init(Room.class, "/rooms.json");
     }
 
     public Room findRoom(String structureId, String roomId) {
@@ -64,14 +63,8 @@ public class RoomService extends BaseService<Room> {
         else throw new BadRequestException("Room is null");
 */
         room.setStructureId(structureId);
-        return createNew(room, roomFile);
+        return createNew(room);
     }
-
-    @SneakyThrows
-    public void deleteFromFile(String roomId) {
-        deleteSingle(roomId, roomFile);
-    }
-
 
     public PagedResponse<Room> findStructureRoomPage(String structureId, Integer offset, Integer limit) {
         List<Room> filteredList = list.stream()
@@ -80,7 +73,4 @@ public class RoomService extends BaseService<Room> {
         return findPage(filteredList, offset, limit);
     }
 
-    public Room updateRoom(String roomId, Room room) {
-        return updateSingle(room, roomId, roomFile);
-    }
 }

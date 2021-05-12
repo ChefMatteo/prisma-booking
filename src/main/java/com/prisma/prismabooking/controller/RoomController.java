@@ -12,8 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Book;
-
 @RestController
 @RequestMapping("/api/v1/structures/{structureId}/rooms")
 public class RoomController {
@@ -31,7 +29,7 @@ public class RoomController {
                             schema = @Schema(implementation = PagedResponse.class)) }) })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public PagedResponse<Room> findStructurePage(@PathVariable("structureId") String structureId,
+    public PagedResponse<Room> findRoomPage(@PathVariable("structureId") String structureId,
                                                  @RequestParam(required = false) Integer offset,
                                                  @RequestParam(required = false) Integer limit) {
         return roomService.findStructureRoomPage(structureId, offset, limit);
@@ -45,7 +43,7 @@ public class RoomController {
             @ApiResponse(responseCode = "404", description = "Room not found",content = @Content )})
     @GetMapping("/{roomId}")
     @ResponseStatus(HttpStatus.OK)
-    public Room findStructure(@PathVariable("structureId") String structureId,
+    public Room findRoom(@PathVariable("structureId") String structureId,
                               @PathVariable("roomId") String roomId) {
         return roomService.findRoom(structureId, roomId);
     }
@@ -58,7 +56,7 @@ public class RoomController {
             @ApiResponse(responseCode = "409", description = "Already exists a room with id in body", content = @Content)})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Room createStructure(@PathVariable("structureId") String structureId,
+    public Room createRoom(@PathVariable("structureId") String structureId,
                                 @RequestBody Room room) {
         if(room.getId() != null)
             throw new BadRequestException("Cannot POST an existing resource");
@@ -73,9 +71,9 @@ public class RoomController {
             @ApiResponse(responseCode = "404", description = "No room to update", content = @Content)})
     @PutMapping("/{roomId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Room updateStructure(@PathVariable("roomId") String roomId,
+    public Room updateRoom(@PathVariable("roomId") String roomId,
                                 @RequestBody Room room) {
-        return roomService.updateRoom(roomId, room);
+        return roomService.updateSingle(room, roomId);
     }
 
     @Operation(summary = "Delete an existing room")
@@ -84,8 +82,8 @@ public class RoomController {
             @ApiResponse(responseCode = "404", description = "No room to delete", content = @Content)})
     @DeleteMapping("/{roomId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteStructure(@PathVariable("roomId") String roomId) {
-        roomService.deleteFromFile(roomId);
+    public void deleteRoom(@PathVariable("roomId") String roomId) {
+        roomService.deleteSingle(roomId);
     }
 
 }
