@@ -1,0 +1,6 @@
+{  "id": "e775f578-d993-4a33-badb-ef26feaeb9bb",  "structureId": "e885f578-d9b3-4a33-badb-ef26feaeb9bb",  "singleBeds": 2,  "kingSizeBeds": 1,  "baths": 1,  "bathTub": false,  "shower": false,  "type": "FAMILY"}
+{  "id": "r775f578-d993-4a33-badb-ef26feaeb9bb",  "structureId": "e885f578-d9b3-4a33-badb-ef26feaeb9bb",  "singleBeds": 0,  "kingSizeBeds": 2,  "baths": 2,  "bathTub": true,  "shower": true,  "type": "DELUXE_SUITE"}
+{  "id": "e775f578-d993-4a33-badb-ef26feaeb9bb",  "structureId": "e555f578-d9b3-4a33-cadc-ef26feaeb9zz",  "singleBeds": 2,  "kingSizeBeds": 1,  "baths": 1,  "bathTub": false,  "shower": false,  "type": "FAMILY"}
+{  "id": "r775f578-d993-4a33-badb-ef26feaeb9bvv",  "structureId": "e555f578-d9b3-4a33-cadc-ef26feaeb9vs",  "singleBeds": 0,  "kingSizeBeds": 2,  "baths": 2,  "bathTub": true,  "shower": true,  "type": "DELUXE_SUITE"}
+{  "id": "e775f578-d993-4a33-badb-ef26feaeb9bb",  "structureId": "w555f578-d9b3-4a33-cadc-ef26feaew9yl",  "singleBeds": 2,  "kingSizeBeds": 1,  "baths": 1,  "bathTub": false,  "shower": false,  "type": "FAMILY"}
+{  "id": "r775f578-d993-4a33-badb-ef26feaeb9bb",  "structureId": "w555f578-d9b3-4a33-cadc-ef26feaew9ygg",  "singleBeds": 0,  "kingSizeBeds": 2,  "baths": 2,  "bathTub": true,  "shower": true,  "type": "DELUXE_SUITE"}

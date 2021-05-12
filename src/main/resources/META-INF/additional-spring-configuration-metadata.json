@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "uni-prisma.max-page-limit",
+      "type": "java.lang.String",
+      "description": "Defines max page size for paginated REST APIs."
+    }
+  ] }

@@ -1,0 +1,569 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI for prisma-booking
+  version: v1
+servers:
+- url: http://localhost:8080/
+  description: Generated server url
+paths:
+  /api/v1/users/{userId}:
+    get:
+      tags:
+      - user-controller
+      summary: Find a user by userId
+      operationId: findStructure
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Found the user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: User not found
+    put:
+      tags:
+      - user-controller
+      summary: Update an existing user
+      operationId: updateStructure
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: User successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: No user to update
+    delete:
+      tags:
+      - user-controller
+      summary: Delete an existing user
+      operationId: deleteStructure
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: No user to delete
+        "204":
+          description: No content
+  /api/v1/structures/{structureId}:
+    get:
+      tags:
+      - structure-controller
+      summary: Get an existing structure
+      operationId: findStructure_1
+      parameters:
+      - name: structureId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: No structure to get
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+    put:
+      tags:
+      - structure-controller
+      summary: Update an existing structure
+      operationId: updateStructure_1
+      parameters:
+      - name: structureId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        required: true
+      responses:
+        "404":
+          description: No structure to update
+        "200":
+          description: Structure successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+    delete:
+      tags:
+      - structure-controller
+      summary: Delete an existing structure
+      operationId: deleteStructure_1
+      parameters:
+      - name: structureId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: No structure to delete
+        "204":
+          description: No content
+  /api/v1/structures/{structureId}/rooms/{roomId}:
+    get:
+      tags:
+      - room-controller
+      summary: Find a room by structureId and roomId
+      operationId: findStructure_2
+      parameters:
+      - name: structureId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Found the room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        "404":
+          description: Room not found
+    put:
+      tags:
+      - room-controller
+      summary: Update an existing room
+      operationId: updateStructure_2
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      responses:
+        "200":
+          description: Room successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        "404":
+          description: No room to update
+    delete:
+      tags:
+      - room-controller
+      summary: Delete an existing room
+      operationId: deleteStructure_2
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: No room to delete
+        "204":
+          description: No content
+  /api/v1/sevices/{serviceName}:
+    get:
+      tags:
+      - service-controller
+      summary: Find a service by name
+      operationId: findStructure_3
+      parameters:
+      - name: serviceName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        "404":
+          description: No service to get
+    put:
+      tags:
+      - service-controller
+      summary: Update an existing service
+      operationId: updateStructure_3
+      parameters:
+      - name: serviceName
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        required: true
+      responses:
+        "200":
+          description: Service successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        "404":
+          description: No service to update
+    delete:
+      tags:
+      - service-controller
+      summary: Delete an existing service
+      operationId: deleteService
+      parameters:
+      - name: serviceName
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "404":
+          description: No service to delete
+        "204":
+          description: No content
+  /api/v1/users:
+    get:
+      tags:
+      - user-controller
+      summary: Get a page of users
+      operationId: findStructurePage
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Found the page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+    post:
+      tags:
+      - user-controller
+      summary: Add a new user
+      operationId: createStructure
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "409":
+          description: Already exists a user with id in body
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/v1/structures:
+    get:
+      tags:
+      - structure-controller
+      summary: Get structures list
+      operationId: findStructurePage_1
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+    post:
+      tags:
+      - structure-controller
+      summary: Add a new structure
+      operationId: createStructure_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+        "409":
+          description: Already exists a structure with id in body
+  /api/v1/structures/{structureId}/rooms:
+    get:
+      tags:
+      - room-controller
+      summary: Get a page of structure's rooms
+      operationId: findStructurePage_2
+      parameters:
+      - name: structureId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Found the page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+    post:
+      tags:
+      - room-controller
+      summary: Create new room
+      operationId: createStructure_2
+      parameters:
+      - name: structureId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Room'
+        required: true
+      responses:
+        "201":
+          description: Room created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        "409":
+          description: Already exists a room with id in body
+  /api/v1/sevices:
+    get:
+      tags:
+      - service-controller
+      summary: Get a page of services
+      operationId: findServicePage
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResponse'
+    post:
+      tags:
+      - service-controller
+      summary: Create new service
+      operationId: createStructure_3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        required: true
+      responses:
+        "201":
+          description: Service created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        "409":
+          description: Already exists a service with name in body
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        userType:
+          type: string
+          enum:
+          - ADMINISTRATOR
+          - MANAGER
+          - RECEPTIONIST
+          - CUSTOMER
+        nphone:
+          type: string
+    Structure:
+      type: object
+      properties:
+        id:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        email:
+          type: string
+        wifi:
+          type: boolean
+        structureType:
+          type: string
+        services:
+          type: array
+          items:
+            type: string
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        structureId:
+          type: string
+        name:
+          type: string
+        singleBeds:
+          type: integer
+          format: int32
+        kingSizeBeds:
+          type: integer
+          format: int32
+        baths:
+          type: integer
+          format: int32
+        bathTub:
+          type: boolean
+        shower:
+          type: boolean
+        type:
+          type: string
+          enum:
+          - ECONOMY
+          - FAMILY
+          - JUNIOR_SUITE
+          - DELUXE_SUITE
+        prices:
+          type: array
+          items:
+            $ref: "#/components/schemas/Map<Season, String>"
+    Service:
+      type: object
+      properties:
+        name:
+          type: string
+        luxury:
+          type: boolean
+        price:
+          type: number
+    PagedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        index:
+          type: string
+        elements:
+          type: string
+        totalElements:
+          type: integer
+          format: int64
+    Map<Season, String>:
+      type: object
+      properties:
+        season:
+          type: string
+          enum:
+            - LOW
+            - MIDDLE
+            - HIGH
+        price:
+          type: number
+          format: double

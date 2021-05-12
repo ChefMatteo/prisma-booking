@@ -1,0 +1,31 @@
+spring:
+  profiles: dev, default
+
+uni-prisma:
+  default-page-limit: 10
+  max-page-limit: 10000
+
+server:
+  port: 8081
+---
+spring:
+  profiles: staging
+
+uni-prisma:
+  default-page-limit: 10
+  max-page-limit: 100
+
+server:
+  port: 8081
+
+---
+spring:
+  profiles: prod
+
+uni-prisma:
+  default-page-limit: 10
+  max-page-limit: 100
+  dataPath: "src/main/resources/data"
+
+server:
+  port: 8080
