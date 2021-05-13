@@ -1,4 +1,4 @@
-{"name":"Golf lessons","luxury":true,"price":58.5}
-{"name":"Private Laundry","luxury":false,"price":10}
-{"name":"Reception H24","luxury":false,"price":0}
-{"name":"babysitting","luxury":true,"price":45868805.70110336}
+[{"name":"Golf lessons","luxury":true,"price":58.5},
+{"name":"Private Laundry","luxury":false,"price":10},
+{"name":"Reception H24","luxury":false,"price":0},
+{"name":"babysitting","luxury":true,"price":45868805.70110336}]

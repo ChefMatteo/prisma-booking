@@ -13,7 +13,7 @@ public class PrismaBookingApplication {
     }
 
     @Bean
-    public Gson gson() {
+    public static Gson gson() {
         return new Gson();
     }
 

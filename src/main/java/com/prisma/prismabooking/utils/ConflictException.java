@@ -1,7 +1,6 @@
 package com.prisma.prismabooking.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ConflictException extends RuntimeException {
 
     public ConflictException(String attr, String value) {
-        super(String.format("Resource alredy exists with %s = %s", attr, value));
-        log.info("Resource alredy exists with {} = {}", attr, value);
+        super(String.format("Resource already exists with %s = %s", attr, value));
+        log.error("Resource already exists with {} = {}", attr, value);
     }
 }

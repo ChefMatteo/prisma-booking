@@ -6,7 +6,6 @@ import com.prisma.prismabooking.model.PagedResponse;
 import com.prisma.prismabooking.utils.BadRequestException;
 import com.prisma.prismabooking.utils.ConflictException;
 import com.prisma.prismabooking.utils.NotFoundException;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -16,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -29,33 +29,34 @@ public abstract class BaseService<T> {
     protected ConfigurationComponent config;
     protected List<T> list = new ArrayList<>();
     protected Gson gson;
+    protected Resource resource;
     protected String getterOfPrimaryKey;
-    protected static Resource resource;
+    protected String nameOfClass;
 
 
     protected void init(Type obj, String pathFile) {
-        if (!Files.exists(Paths.get(config.getDataPath()))) {
-            try {
-                Files.createDirectory(Paths.get(config.getDataPath()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        nameOfClass=obj.getClass().getName();
         try {
-            File file = new File(config.getDataPath() + pathFile);
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ResourceLoader rl = new DefaultResourceLoader();
-        resource = rl.getResource("file:" + config.getDataPath() + pathFile);
-        if (resource.exists()) {
-            try {
-                Stream<String> lines = Files.lines(resource.getFile().toPath());
-                lines.forEach(l -> list.add(gson.fromJson(l, obj)));
-            } catch (IOException e) {
-                log.error("Error reading structures file with cause: {}", e.getMessage());
+            if (!Files.exists(Paths.get(config.getDataPath()))) {
+                Files.createDirectory(Paths.get(config.getDataPath()));
             }
+            File file = new File(config.getDataPath() + pathFile);
+            if(file.createNewFile()){
+                Files.write(file.toPath(), ("[").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+            }
+            ResourceLoader rl = new DefaultResourceLoader();
+            resource = rl.getResource("file:" + config.getDataPath() + pathFile);
+            if (resource.exists()) {
+                Stream<String> lines = Files.lines(resource.getFile().toPath());
+                lines.forEach(l -> {
+                    l= l.replace("[{", "{");
+                    l= l.replace("},", "}");
+                    l= l.replace("}]", "}");
+                    list.add(gson.fromJson(l, obj));
+                });
+            }
+        } catch (IOException e) {
+            throw new BadRequestException(String.format("Error in init of "+nameOfClass+" with cause: (IOException) %s", e.getMessage()));
         }
     }
 
@@ -63,11 +64,7 @@ public abstract class BaseService<T> {
     public T createNew(T obj) {
         if (!list.contains(obj)) {
             list.add(obj);
-            try {
-                Files.write(resource.getFile().toPath(), (gson.toJson(obj).concat(System.lineSeparator())).getBytes(), StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            updateJson();
             return obj;
         }
         throw new ConflictException("id", invokeGetMethod(obj).toString());
@@ -78,7 +75,7 @@ public abstract class BaseService<T> {
                 .filter(Objects::nonNull)
                 .filter(t -> invokeGetMethod(t).toString().equalsIgnoreCase(id))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(id));
+                .orElse(null);
     }
 
     public void deleteSingle(String id) {
@@ -103,11 +100,12 @@ public abstract class BaseService<T> {
         index = Optional.ofNullable(index).orElse(0);
         int start = index * limit;
         int end = start + limit;
+
         if (start > filteredList.size() || limit < 0 || start < 0) {
             if (start > filteredList.size() || start<0) {
                 throw new BadRequestException("Offset "+index+" not valid");
             }
-            throw new BadRequestException("Limit "+limit+" not valid");
+            throw new BadRequestException("Limit "+limit+" can't be negative");
         } else if (end > filteredList.size()) {
             end = filteredList.size();
             pageContent = filteredList.subList(start, filteredList.size());
@@ -132,21 +130,21 @@ public abstract class BaseService<T> {
                     try {
                         return method.invoke(objOfMethod);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+                        throw new BadRequestException(String.format("Error in invokeGetMethod of "+nameOfClass+" with cause: (IllegalAccessException | InvocationTargetException) {}", e.getMessage()));
                     }
-                    return "";
                 })
-                .findFirst().get();
+                .findFirst()
+                .orElseThrow(()-> new NotFoundException("Primary key is null"));
     }
 
-    protected void updateJson(){
+    public void updateJson(){
         String updatedList = list.stream()
                 .map(t -> gson.toJson(t))
-                .collect(Collectors.joining(System.lineSeparator()));
+                .collect(Collectors.joining(","+System.lineSeparator()));
         try {
-            Files.write(resource.getFile().toPath(), (updatedList+System.lineSeparator()).getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(resource.getFile().toPath(), ("["+updatedList+"]"+System.lineSeparator()).getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BadRequestException(String.format("Error in updateJson of "+nameOfClass+" with cause: (IOException) {}", e.getMessage()));
         }
     }
 
@@ -154,7 +152,6 @@ public abstract class BaseService<T> {
         limit = Optional.ofNullable(limit)
                 .filter(l -> l <= config.getMaxPageLimit())
                 .orElse(config.getDefaultPageLimit());
-
         if (limit > list.size()) {
             limit = list.size();
         }
